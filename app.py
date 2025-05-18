@@ -1,4 +1,5 @@
 from typer import Typer, Option
+from rich.console import Console
 from rich import print as rprint
 from typing_extensions import Annotated
 
@@ -40,15 +41,18 @@ class Alphabet:
             'Ü': {'deutsch': 'Übermut', 'nato': 'Übermut'}
         }
 
-    def spell(self, text: str, 
-              end: str ="\n"):
+    def spell(self, text: str) -> str:
+        result = ""
         for character in text:
             if character.upper() in self.alphabet:
-                rprint(
-                    f"[bold red]{character.upper()}[/red bold]{self.alphabet[character.upper()][self.categorie][1:]}", 
-                    end=end)
+                result += f"[red]{character.upper()}[/red]{self.alphabet[character.upper()][self.categorie][1:]}"
+            elif character != " ":
+                result += f"[red]{character.upper()}[/red]"
             else:
-                rprint(f"[bold red]{character.upper()}[/red bold]", end=end)
+                result += character
+
+            result += "\n"
+        return result
 
 @app.command()
 def spell_out(text: str, 
@@ -56,10 +60,10 @@ def spell_out(text: str,
                   str, 
                   Option(help="Es stehen das Deutsche und das Nato Alphabet zur Verfügung")
               ] = "deutsch",
-              end: Annotated[
-                  str,
-                  Option(help="Gibt das Trennzeichen für die Ausgabe an.")
-              ] = "\n") -> None:
+              in_newline: Annotated[
+                  bool,
+                  Option(help="Alles in einer neuen Zeile?")
+              ] = False) -> None:
     """
     Nimmt ein beliebigen Text entgegen und gibt ihn buchstabiert zurück.
     
@@ -71,8 +75,14 @@ def spell_out(text: str,
     Ausgabe: \n
     Buchstabierend auf die Standardausgabe
     """
+    console = Console()
     alpha = Alphabet(categorie)
-    alpha.spell(text, end)
+    result = alpha.spell(text)
+    
+    if in_newline:
+        console.print(result)
+    else:
+        console.print(result.replace("\n", ""))
 
 
 if __name__ == '__main__':
