@@ -48,7 +48,7 @@ class Alphabet:
                     f"[bold red]{character.upper()}[/red bold]{self.alphabet[character.upper()][self.categorie][1:]}", 
                     end=end)
             else:
-                rprint(character, end=end)
+                rprint(f"[bold red]{character.upper()}[/red bold]", end=end)
 
 @app.command()
 def spell_out(text: str, 
