@@ -1,6 +1,5 @@
 from typer import Typer, Option
 from rich.console import Console
-from rich import print as rprint
 from typing_extensions import Annotated
 
 
